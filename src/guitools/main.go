@@ -106,8 +106,17 @@ func cleanup(w http.ResponseWriter, r *http.Request) {
 			fmt.Println("Wrote %d bytes.\n", bytesWritten)
 		}
 		fmt.Println("ZBS Operation:", r.Form["operation"])
+		if r.Form["operation"][0] == "delvolume" {
+			fmt.Println("======ZBS Operation delvolume:")
+			out, err := Shell("sh del_vol.sh " + r.Form["tenant_id"][0])
+			if err != nil {
+				fmt.Fprintf(w, "Error parameter not correct!") //这个写入到w的是输出到客户端的
+			}
+			fmt.Fprintf(w, "Hello astaxie!") //这个写入到w的是输出到客户端的
+			fmt.Fprintf(w, out)              //这个写入到w的是输出到客户端的
+		}
 		//写文件
-		bytesWritten, err = file.Write([]byte(strings.Join(r.Form["operation"], "")))
+		bytesWritten, err = file.Write([]byte(strings.Join(r.Form["operation"], "") + " "))
 		check(err)
 		fmt.Println("Wrote %d bytes.\n", bytesWritten)
 		if len(r.Form["note"][0]) == 0 {
@@ -120,7 +129,9 @@ func cleanup(w http.ResponseWriter, r *http.Request) {
 			check(err)
 			fmt.Println("Wrote %d bytes.\n", bytesWritten)
 		}
+		fmt.Fprintf(w, "Cleanup finished...!") //这个写入到w的是输出到客户端的
 	}
+	fmt.Fprintf(w, "Welcome to cleanup process!") //这个写入到w的是输出到客户端的
 }
 
 func sayhelloName(w http.ResponseWriter, r *http.Request) {
