@@ -1,0 +1,18 @@
+{
+    "tenants":[
+        {
+            "tenant_id":"zbs-admin"
+        },
+        {
+            "tenant_id":"ebs-admin"
+        }
+    ],
+    "emails":[
+        {
+            "email":"baihao@jd.com"
+        },
+        {
+            "email":"yc@jd.com"
+        }
+    ]
+}
