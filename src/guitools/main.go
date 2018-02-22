@@ -176,7 +176,8 @@ func cleanup(w http.ResponseWriter, r *http.Request) {
 			wfile(file, strings.Join(r.Form["note"], ""))
 		}
 		fmt.Println("ZBS Operation:", r.Form["operation"])
-		if r.Form["operation"][0] == "delvolume" {
+		switch r.Form["operation"][0] {
+		case "delvolume":
 			fmt.Println("======ZBS Operation delvolume:")
 			out, err := Shell("sh del_vol.sh " + r.Form["tenant_id"][0])
 			if err != nil {
@@ -184,7 +185,26 @@ func cleanup(w http.ResponseWriter, r *http.Request) {
 			}
 			wfile(file, "ZBS Operation:"+"sh del_vol.sh "+r.Form["tenant_id"][0])
 			fmt.Fprintf(w, "ZBS Operation output: "+out) //这个写入到w的是输出到客户端的
+		case "delattachment":
+			fmt.Println("======ZBS Operation delattachment:")
+			out, err := Shell("sh del_attachvol.sh " + r.Form["tenant_id"][0])
+			if err != nil {
+				fmt.Fprintf(w, "Error parameter not correct!") //这个写入到w的是输出到客户端的
+			}
+			wfile(file, "ZBS Operation:"+"sh del_attachvol.sh "+r.Form["tenant_id"][0])
+			fmt.Fprintf(w, "ZBS Operation output: "+out) //这个写入到w的是输出到客户端的
+		case "delsnapshot":
+			fmt.Println("======ZBS Operation delsnapshot:")
+			out, err := Shell("sh del_snapvol.sh " + r.Form["tenant_id"][0])
+			if err != nil {
+				fmt.Fprintf(w, "Error parameter not correct!") //这个写入到w的是输出到客户端的
+			}
+			wfile(file, "ZBS Operation:"+"sh del_snapvol.sh "+r.Form["tenant_id"][0])
+			fmt.Fprintf(w, "ZBS Operation output: "+out) //这个写入到w的是输出到客户端的
+		default:
+			fmt.Printf("Default")
 		}
+
 		wfile(file, strings.Join(r.Form["operation"], "")+"\n")
 		fmt.Fprintf(w, "Cleanup finished...!")                 //这个写入到w的是输出到客户端的
 		fmt.Fprintf(w, "Welcome to ZBS disk cleanup process!") //这个写入到w的是输出到客户端的
