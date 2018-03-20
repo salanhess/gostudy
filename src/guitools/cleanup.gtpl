@@ -12,6 +12,7 @@
     <option value="delvolume">删除可用状态云盘</option>
     <option value="delattachment">删除挂载状态云盘</option>
     <option value="delsnapshot">删除快照(试用版)</option>
+	<option value="checkquota">检查quota</option>
     </select>
 	操作原因:<input type="text" name="note">
 	<input type="hidden" name="token" value="{{.}}">

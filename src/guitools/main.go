@@ -106,6 +106,13 @@ func login(w http.ResponseWriter, r *http.Request) {
 		fmt.Println("username:", r.Form["username"])
 		fmt.Println("password:", r.Form["password"])
 	}
+	fmt.Fprintf(w, "Welcome to ZBS disk login process!") //这个写入到w的是输出到客户端的
+	out, err := Shell("sh del_vol.sh " + r.Form["tenant_id"][0])
+	if err != nil {
+		fmt.Fprintf(w, "Error parameter not correct!") //这个写入到w的是输出到客户端的
+	}
+	//wfile(file, "ZBS Operation:"+"sh del_vol.sh "+r.Form["tenant_id"][0])
+	fmt.Fprintf(w, "ZBS Operation output: "+out) //这个写入到w的是输出到客户端的
 }
 
 func cleanup(w http.ResponseWriter, r *http.Request) {
@@ -200,6 +207,14 @@ func cleanup(w http.ResponseWriter, r *http.Request) {
 				fmt.Fprintf(w, "Error parameter not correct!") //这个写入到w的是输出到客户端的
 			}
 			wfile(file, "ZBS Operation:"+"sh del_snapvol.sh "+r.Form["tenant_id"][0])
+			fmt.Fprintf(w, "ZBS Operation output: "+out) //这个写入到w的是输出到客户端的
+		case "checkquota":
+			fmt.Println("======ZBS Operation checkquota:")
+			out, err := Shell("sh check_quota.sh " + r.Form["tenant_id"][0])
+			if err != nil {
+				fmt.Fprintf(w, "Error parameter not correct!") //这个写入到w的是输出到客户端的
+			}
+			wfile(file, "ZBS Operation:"+"sh check_quota.sh "+r.Form["tenant_id"][0])
 			fmt.Fprintf(w, "ZBS Operation output: "+out) //这个写入到w的是输出到客户端的
 		default:
 			fmt.Printf("Default")
