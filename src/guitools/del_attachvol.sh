@@ -5,34 +5,37 @@ set -o nounset
 #status 35 Errordetached, 32 volumeattached
 tid=$1
 #tid=ebs-admin
-sip=192.168.180.116:9698
-Maxtry=3
+#sip=192.168.180.116:9698
+sip=172.19.58.198:80
+#MariaDB [zbs_global]> GRANT ALL PRIVILEGES ON zbs_global.* TO 'zbs_global'@'172.19.58.194' IDENTIFIED BY 'zbs_global';
+export sqlstr="-h172.19.58.198 -uzbs_global -pzbs_global zbs_global"
+Maxtry=12
 export CC_SERVER_URL="http://$sip/zbs-server"
 export CC_TENANT_ID="$tid"
 logpath=log/operation.log
 #ln -sf /export/jcloud-zbs/bin/zbs-cli /usr/bin/zbs-cli
+echo ==== mysql ${sqlstr} ======
 echo `date "+%Y-%m-%d-%H:%M:%S"`, start del volume with attach |tee -ai $logpath
-for vol in `mysql zbs_global -e"select id  from volume where tenant_id='$tid' and status=2" |grep vol-`
-#for vol in `mysql  -h$sqlip -uzbs_global -pzbs_global zbs_global -e"select id  from volume where tenant_id='$tid' and status=2" |grep vol-`
+for vol in `mysql ${sqlstr} -e"select id  from volume where tenant_id='$tid' and status=2" |grep vol-`
 do
-    attachid=`mysql zbs_global -e"select *  from volume_attachment where volume_id='${vol}' and status=32" |grep vol-tach |awk '{print $1}'`
+    attachid=`mysql ${sqlstr} -e"select *  from volume_attachment where volume_id='${vol}' and status=32" |grep vol-tach |awk '{print $1}'`
     #attachid=`mysql  -h$sqlip -uzbs_global -pzbs_global zbs_global -e"select *  from volume_attachment where volume_id='${vol}' and status!=33" |grep vol-tach |awk '{print $1}'`
     if [ -z "$attachid" ] ;then
        echo " volume ${vol} attach status not avaible,need reset process" |tee -ai $logpath
     else
        echo "${vol} attachid is $attachid" |tee -ai $logpath
        echo delete attached volume by cli |tee -ai $logpath
-       echo zbs-cli volume-detach ${vol} $attachid |tee -ai $logpath
+       zbs-cli volume-detach ${vol} $attachid |tee -ai $logpath
 
        volstatus=
        num=0
        while [[ $volstatus != "available" ]]
        do
-  	 	if [ $num -eq $Maxtry ]
-  	 	then
+  	 if [ $num -eq $Maxtry ]
+  	 then
             echo "Max try num access!" |tee -ai $logpath
-	    	break       	   #Abandon the while lopp.
-        fi
+	    break       	   #Abandon the while lopp.
+         fi
           volstatus=`zbs-cli volume-describe $vol |  grep status  | awk -F '|' '{print $3}' | sed 's/ //g'`
           echo "wait vol detach. now $vol is $volstatus" |tee -ai $logpath
           sleep 3

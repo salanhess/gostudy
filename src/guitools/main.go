@@ -216,6 +216,38 @@ func cleanup(w http.ResponseWriter, r *http.Request) {
 			}
 			wfile(file, "ZBS Operation:"+"sh check_quota.sh "+r.Form["tenant_id"][0])
 			fmt.Fprintf(w, "ZBS Operation output: "+out) //这个写入到w的是输出到客户端的
+		case "delvolid":
+			fmt.Println("======ZBS Operation delete via volume id:")
+			out, err := Shell("sh del_volid.sh " + r.Form["note"][0])
+			if err != nil {
+				fmt.Fprintf(w, "Error parameter not correct!") //这个写入到w的是输出到客户端的
+			}
+			wfile(file, "ZBS Operation:"+"sh del_volid.sh "+r.Form["note"][0])
+			fmt.Fprintf(w, "ZBS Operation output: "+out) //这个写入到w的是输出到客户端的
+		case "checkjss":
+			fmt.Println("======ZBS Operation check third party jss(S3) service status:")
+			out, err := Shell("sh check_jss.sh")
+			if err != nil {
+				fmt.Fprintf(w, "Error parameter not correct!") //这个写入到w的是输出到客户端的
+			}
+			wfile(file, "ZBS Operation:"+"sh check_jss.sh "+r.Form["note"][0])
+			fmt.Fprintf(w, "ZBS Operation output: "+out) //这个写入到w的是输出到客户端的
+		case "recycledeletedvol":
+			fmt.Println("======ZBS Operation recycle deleted status volumes:")
+			out, err := Shell("sh recycle_deletedvol.sh")
+			if err != nil {
+				fmt.Fprintf(w, "Error parameter not correct!") //这个写入到w的是输出到客户端的
+			}
+			wfile(file, "ZBS Operation:"+"sh recycle_deletedvol.sh "+r.Form["note"][0])
+			fmt.Fprintf(w, "ZBS Operation output: "+out) //这个写入到w的是输出到客户端的
+		case "checkvolid":
+			fmt.Println("======ZBS Operation check via volume id:")
+			out, err := Shell("sh check_volid.sh " + r.Form["note"][0])
+			if err != nil {
+				fmt.Fprintf(w, "Error parameter not correct!") //这个写入到w的是输出到客户端的
+			}
+			wfile(file, "ZBS Operation:"+"sh check_volid.sh "+r.Form["note"][0])
+			fmt.Fprintf(w, "ZBS Operation output: "+out) //这个写入到w的是输出到客户端的
 		default:
 			fmt.Printf("Default")
 		}
@@ -257,6 +289,12 @@ func sayhi(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+func display(w http.ResponseWriter, r *http.Request) {
+	r.ParseForm() //解析参数，默认是不会解析的
+	fmt.Println("username:", r.Form["username"])
+	fmt.Println("email:", r.Form["email"])
+}
+
 func Shell(bash string) (string, error) {
 	var buf bytes.Buffer
 	cmd := exec.Command("sh", "-c", bash)
@@ -272,6 +310,7 @@ func main() {
 	http.HandleFunc("/hi", sayhi)            //设置访问的路由
 	http.HandleFunc("/login", login)         //设置访问的路由
 	http.HandleFunc("/cleanup", cleanup)     //设置访问的路由
+	http.HandleFunc("/display", display)     //设置访问的路由
 	err := http.ListenAndServe(":9090", nil) //设置监听的端口
 	if err != nil {
 		log.Fatal("ListenAndServe: ", err)

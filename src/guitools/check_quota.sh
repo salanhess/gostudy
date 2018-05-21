@@ -11,4 +11,7 @@ zbs-cli volume-list |egrep "available|in-use"
 echo "=======current available and in-use Snapshots list:========="
 zbs-cli snapshot-list |egrep "available|in-use"
 echo `date "+%Y-%m-%d-%H:%M:%S"`, end check quota |tee -ai $logpath
+echo "======check current DB use volume storage status:======"
+mysql zbs_global -e"select sum(size)/1024/1024/1024, count(*) ,tenant_id  from volume where status in (1,2) group by tenant_id order by count(*) DESC"
+
 
