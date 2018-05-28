@@ -115,6 +115,71 @@ func login(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintf(w, "ZBS Operation output: "+out) //这个写入到w的是输出到客户端的
 }
 
+func build_jenkins(w http.ResponseWriter, r *http.Request) {
+	fmt.Println("method:", r.Method) //获取请求的方法
+	if r.Method == "GET" {
+		crutime := time.Now().Unix()
+		h := md5.New()
+		io.WriteString(h, strconv.FormatInt(crutime, 10))
+		token := fmt.Sprintf("%x", h.Sum(nil))
+		t, _ := template.ParseFiles("build.gtpl")
+		log.Println(t.Execute(w, token))
+	} else {
+		file, err := os.OpenFile("log/build.log", os.O_APPEND|os.O_WRONLY, 0666)
+		check(err)
+		defer file.Close()
+		wfile(file, time.Now().String()+" Start to write Bytes log!\n")
+		//请求的是登录数据，那么执行登录的逻辑判断
+		r.ParseForm()
+		token := r.Form.Get("token")
+		if token != "" {
+			//验证token的合法性
+			fmt.Println("Verify token wether correct...")
+			wfile(file, "token: "+token+" ")
+		} else {
+			//不存在token报错
+			fmt.Println("Error,token not exist")
+			http.Error(w, err.Error(), 500)
+		}
+		if r.Form["email"][0] == "" {
+			fmt.Println("email add must input!")
+		} else {
+			if m, _ := regexp.MatchString(`^([\w\.\_]{2,10})@jd.com$`, r.Form.Get("email")); !m {
+				//if m, _ := regexp.MatchString(`^([\w\.\_]{2,10})@(\w{1,}).([a-z]{2,4})$`, r.Form.Get("email")); !m {
+				errhandle(w, "email addr format not corret!")
+				return
+			} else {
+				if validateroles("cfg.json", "email", r.Form["email"][0]) {
+					fmt.Println("email:", r.Form["email"])
+					wfile(file, strings.Join(r.Form["email"], " "))
+				} else {
+					errhandle(w, "email addr not in white list!")
+					return
+				}
+			}
+		}
+		fmt.Println("build Operation:", r.Form["operation"])
+		switch r.Form["operation"][0] {
+		case "build_jenkins":
+			fmt.Println("======build Operation build_jenkins:")
+			//fmt.Fprintf(w, "ZBS build output: "+r.Form["zbs_server_branch"][0]+r.Form["zbs_server_commitid"][0]) //这个写入到w的是输出到客户端的
+			//cmd := exec.Command("export zbs_server_branch=", r.Form["zbs_server_branch"][0], "export zbs_server_commitid=", r.Form["zbs_server_commitid"][0], "echo sh job_jenkins.sh")
+			cmd := exec.Command("/bin/sh", "-c", "export zbs_server_branch="+r.Form["zbs_server_branch"][0], "echo zbs_server_branch > /root/workspace/guitools/tmp.para")
+			err := cmd.Run()
+			//out, err := Shell("export zbs_server_branch="+r.Form["zbs_server_branch"][0] && echo "job_jenkins.sh r.Form["module"][0] r.Form["tag"][0]")
+			if err != nil {
+				fmt.Fprintf(w, "Error parameter not correct!") //这个写入到w的是输出到客户端的
+			}
+			//wfile(file, "ZBS build Operation:"+"export zbs_server_branch="+r.Form["zbs_server_branch"][0] && echo zbs_server_branch && echo sh job_jenkins.sh + r.Form["module"][0] + " "" + r.Form["tag"][0]")
+			//fmt.Fprintf(w, "ZBS Operation output: "+string(out)) //这个写入到w的是输出到客户端的
+		default:
+			fmt.Printf("Default")
+		}
+		wfile(file, strings.Join(r.Form["operation"], "")+"\n")
+		fmt.Fprintf(w, "build finished...!") //这个写入到w的是输出到客户端的
+	}
+}
+
 func cleanup(w http.ResponseWriter, r *http.Request) {
 	fmt.Println("method:", r.Method) //获取请求的方法
 	if r.Method == "GET" {
@@ -248,6 +313,22 @@ func cleanup(w http.ResponseWriter, r *http.Request) {
 			}
 			wfile(file, "ZBS Operation:"+"sh check_volid.sh "+r.Form["note"][0])
 			fmt.Fprintf(w, "ZBS Operation output: "+out) //这个写入到w的是输出到客户端的
+		case "checklogold10":
+			fmt.Println("======ZBS Operation checklogold10:")
+			out, err := Shell("sh checkold10minslog.sh ")
+			if err != nil {
+				fmt.Fprintf(w, "Error parameter not correct!") //这个写入到w的是输出到客户端的
+			}
+			wfile(file, "ZBS Operation:"+"sh checkold10minslog.sh ")
+			fmt.Fprintf(w, "ZBS checkold10minslog output: "+out) //这个写入到w的是输出到客户端的
+		case "checklogrange":
+			fmt.Println("======ZBS Operation checklogrange:")
+			out, err := Shell("sh checkrangelog.sh " + "\"" + r.Form["note"][0] + "\"")
+			if err != nil {
+				fmt.Fprintf(w, "Error parameter not correct!") //这个写入到w的是输出到客户端的
+			}
+			wfile(file, "ZBS Operation:"+" sh checkrangelog.sh "+"\""+r.Form["note"][0]+"\"")
+			fmt.Fprintf(w, "ZBS checkold10minslog output: "+out) //这个写入到w的是输出到客户端的
 		default:
 			fmt.Printf("Default")
 		}
@@ -306,12 +387,13 @@ func Shell(bash string) (string, error) {
 }
 
 func main() {
-	http.HandleFunc("/bash", sayhelloName)   //设置访问的路由
-	http.HandleFunc("/hi", sayhi)            //设置访问的路由
-	http.HandleFunc("/login", login)         //设置访问的路由
-	http.HandleFunc("/cleanup", cleanup)     //设置访问的路由
-	http.HandleFunc("/display", display)     //设置访问的路由
-	err := http.ListenAndServe(":9090", nil) //设置监听的端口
+	http.HandleFunc("/bash", sayhelloName)           //设置访问的路由
+	http.HandleFunc("/hi", sayhi)                    //设置访问的路由
+	http.HandleFunc("/login", login)                 //设置访问的路由
+	http.HandleFunc("/cleanup", cleanup)             //设置访问的路由
+	http.HandleFunc("/display", display)             //设置访问的路由
+	http.HandleFunc("/build_jenkins", build_jenkins) //设置访问的路由
+	err := http.ListenAndServe(":9090", nil)         //设置监听的端口
 	if err != nil {
 		log.Fatal("ListenAndServe: ", err)
 	}

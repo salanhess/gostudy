@@ -17,6 +17,8 @@
 	<option value="checkvolid">通过volid删除盘(试用版)</option>
 	<option value="checkquota">检查quota</option>
 	<option value="checkjss">检查快照(jss云存储)服务</option>
+	<option value="checklogold10">检查zbs相关模块错误日志with10mins(试用版)</option>
+	<option value="checklogrange">检查zbs相关模块错误日志accordingRange(试用版)</option>
     </select>
 	操作原因:<input type="text" name="note">
 	<input type="hidden" name="token" value="{{.}}">

@@ -1,5 +1,4 @@
 #!/bin/bash
-set -e
 processname=guitools
 chmod +x guitools
 echo before restart:
@@ -9,3 +8,4 @@ sleep 3s
 nohup ./$processname > log/guitools.out 2>&1 &
 echo after restart:
 ps aux |grep -v grep|grep $processname
+
