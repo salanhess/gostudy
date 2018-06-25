@@ -8,6 +8,31 @@ import (
 	"time"
 )
 
+func MyGetHttpRespWithHeaders(req string, headers map[string]string) {
+	client := &http.Client{Timeout: 10 * time.Second}
+	log.Println("[INFO][GetHttpRespWithHeaders] url: ", req)
+	if req, err := http.NewRequest("GET", req, nil); err != nil {
+		log.Println("[ERROR][GetHttpRespWithHeaders] http.NewRequest err ", err)
+	} else {
+		for k, v := range headers {
+			req.Header.Add(k, string(v))
+		}
+
+		if resp, err := client.Do(req); err != nil {
+			log.Println("[ERROR][GetHttpRespWithHeaders] client.Do err ", err)
+		} else {
+			defer resp.Body.Close()
+			if raw, err := ioutil.ReadAll(resp.Body); err != nil {
+				//return resp, nil, err
+				log.Println("[ERR]", raw)
+			} else {
+				//log.Println("[INFO][GetHttpRespWithHeaders] raw: " + string(raw))
+				//return resp, raw, nil
+			}
+		}
+	}
+}
+
 func PostHttpResp(req string, data []byte) (*http.Response, []byte, error) {
 	// func PostHttpResp(req string, data []byte) (*http.Response, *json.RawMessage, error) {
 	client := &http.Client{Timeout: 10 * time.Second}
@@ -105,4 +130,3 @@ func DeleteHttpRespWithHeaders(req string, headers map[string]string) (*http.Res
 		}
 	}
 }
-
