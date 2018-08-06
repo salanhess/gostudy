@@ -5,7 +5,6 @@ package main
 import (
 	"encoding/json"
 	"fmt"
-<<<<<<< HEAD
 )
 
 func checkSlice(s []int) {
@@ -57,7 +56,6 @@ func main() {
 	stringview(s2)
 
 	stringview(s3)
-=======
 	"lib"
 	"log"
 	"model"
