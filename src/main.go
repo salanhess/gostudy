@@ -1,4 +1,4 @@
-package main
+package main_
 
 import (
 	"fmt"
@@ -47,8 +47,11 @@ func Study_C3_5_leetcode() {
 	g.LengthofNonRepeating("aabbccdd")
 }
 
-func main() {
+func Study_C3_6() {
 	Study_C3_5_leetcode()
 	g.Study_C3_6()
 	g.LengthofNonRepeating_Rune("你不是我是大傻逼大傻逼")
+}
+func main() {
+
 }
