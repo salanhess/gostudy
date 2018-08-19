@@ -1,9 +1,9 @@
 package mock
 
-type Retriever struct {
-	Contents string
+type Retreiver struct {
+	Context string
 }
 
-func (r Retriever) Get(url string) string {
-	return r.Contents
+func (r Retreiver) Get(url string) string {
+	return r.Context
 }

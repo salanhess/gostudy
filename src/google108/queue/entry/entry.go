@@ -6,12 +6,21 @@ import (
 )
 
 func main() {
-	q := queue.Queue{1}
-	q.Push(2)
+	//	q := queue.Queue{1}
+	//	q.Push(2)
+	//	fmt.Println(q)
+	//	fmt.Println(q.IsEmpty())
+	//	q.Pop()
+	//	q.Pop()
+	//	fmt.Println(q.IsEmpty())
+	//	//	q.Pop()
+
+	fmt.Println("=============")
+	q := queue.Queue{"abc"}
+	q.Push("efg")
 	fmt.Println(q)
 	fmt.Println(q.IsEmpty())
 	q.Pop()
 	q.Pop()
 	fmt.Println(q.IsEmpty())
-	q.Pop()
 }

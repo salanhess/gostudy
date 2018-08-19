@@ -1,16 +1,16 @@
 package queue
 
-type Queue []int
+type Queue []interface{}
 
-func (q *Queue) Push(v int) {
+func (q *Queue) Push(v interface{}) {
 	*q = append(*q, v)
 }
 
-func (q *Queue) Pop() int {
+func (q *Queue) Pop() interface{} {
 	if len(*q) == 0 {
 		panic("error ,q is nil!")
 	}
-	head := (*q)[0]
+	head := (*q)[0].(string) //.(int) will convert to int type
 	*q = (*q)[1:]
 	return head
 }
