@@ -35,3 +35,30 @@ func main() {
 	check_switch(block)
 	check_switch(container2)
 }
+
+//方法3：用reflect
+//  switch t := diskSpecificationConfarray.(type) {
+//  case targetTypeXXX:
+//      log.Printf("[]openapi_model.DiskSpecificationConf: %v\n", t)
+//  default:
+//      var r = reflect.TypeOf(resp.Elements)
+//      log.Printf("Other:%v\n", r)
+//  }
+//
+//   var structXXX
+//  util.FormatResponse(<interface{}>XXX, targetTypeXXX)
+//
+// 将interface强制转换成已知类型
+//func FormatResponse(data interface{}, view interface{}) error {
+//    b, err := json.Marshal(data)
+//    if err != nil {
+//        return err
+//    }
+//    decoder := json.NewDecoder(bytes.NewReader(b))
+//    decoder.UseNumber()
+//    err = decoder.Decode(view)
+//    if err != nil {
+//        return err
+//    }
+//    return nil
+//}
