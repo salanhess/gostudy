@@ -27,10 +27,16 @@ func example1() {
 	select {
 	case <-intChannels[0]:
 		fmt.Println("The first candidate case is selected.")
+	case <-intChannels[0]:
+		fmt.Println("***=The first candidate case is selected.")
 	case <-intChannels[1]:
 		fmt.Println("The second candidate case is selected.")
+	case <-intChannels[1]:
+		fmt.Println("XXX=The second candidate case is selected.")
 	case elem := <-intChannels[2]:
 		fmt.Printf("The third candidate case is selected, the element is %d.\n", elem)
+	case elem := <-intChannels[2]:
+		fmt.Printf("@@@@@=The third candidate case is selected, the element is %d.\n", elem)
 	default:
 		fmt.Println("No candidate case is selected!")
 	}
@@ -46,9 +52,9 @@ func example2() {
 	select {
 	case _, ok := <-intChan:
 		if !ok {
-			fmt.Println("The candidate case is closed.")
+			fmt.Println("XXX=The candidate case is closed.")
 			break
 		}
-		fmt.Println("The candidate case is selected.")
+		fmt.Println("###=The candidate case is selected.")
 	}
 }
