@@ -7,7 +7,9 @@ func basic_chan() {
 	ch1 <- 1
 	ch1 <- 2
 	elem := <-ch1
-	fmt.Printf("elem %v \n", elem)
+	fmt.Printf("basic_chan: elem %v \n", elem)
+	elem = <-ch1
+	fmt.Printf("basic_chan: elem %v \n", elem)
 }
 
 func invaild_chan1() {
