@@ -66,3 +66,20 @@ func main() {
 	fmt.Printf("mystruct direct value is %s\n\n", Mystruct{"Susan", 33}.Smystr)
 	//fmt.Printf("mystruct direct value is %s\n, address is %s\n", Mystruct{"Susan", 33}.Smystr, &Mystruct{"Susan", 33}.Smystr)
 }
+
+/*
+[root@izhp3c4nnfdk1zyhek9f3ez jike]# cd D15_pointer/ && go run pointerTry.go
+vim-go
+const Mycst is 1
+123 is 123
+1+2 is 3
+Mystr[0] is 97
+Mystr[0:1] is a
+Myslice[0:1] is [abc]
+Myslice[0:1] is [abc], address is &[abc]
+Mymap is malaixiya
+My lamda func!
+Lamda func is 0xc42000c038
+mystruct is {Carol 22},address is %!s(*int=0xc42000a110)
+mystruct direct value is Susan
+*/
