@@ -7,36 +7,31 @@ import (
 
 type Dog struct {
 	name string
+	age  int
 }
 
-func (dog *Dog) SetName(name string) {
-	dog.name = name
-}
-
-func (dog Dog) Name() string {
-	return dog.name
+func (d *Dog) Setname(name string) {
+	d.name = name
 }
 
 func main() {
-	// 示例1。
-	dog := Dog{"little pig"}
+	dog := Dog{"little dog", 11}
 	dogP := &dog
 	dogPtr := uintptr(unsafe.Pointer(dogP))
-
+	fmt.Println(dogPtr)
+	dogP.Setname("big dog")
+	fmt.Printf("After setname, dog is %v\n", *dogP)
 	namePtr := dogPtr + unsafe.Offsetof(dogP.name)
 	nameP := (*string)(unsafe.Pointer(namePtr))
-	fmt.Printf("nameP == &(dogP.name)? %v\n",
-		nameP == &(dogP.name))
-	fmt.Printf("The name of dog is %q.\n", *nameP)
-
-	*nameP = "monster"
-	fmt.Printf("The name of dog is %q.\n", dogP.name)
-	fmt.Println()
-
-	// 示例2。
-	// 下面这种不匹配的转换虽然不会引发panic，但是其结果往往不符合预期。
-	numP := (*int)(unsafe.Pointer(namePtr))
-	num := *numP
-	fmt.Printf("This is an unexpected number: %d\n", num)
+	fmt.Printf("namePtr is %v\n", namePtr)
+	newDog := "Huge Ptr dog"
+	fmt.Printf("newDog Ptr is %v\n", &newDog)
+	//*nameP = "Huge Ptr dog"
+	*nameP = newDog
+	//nameP = &newDog // 这样操作不行，因为nameP是一个C type的传统指针，必须*用法
+	fmt.Printf("After setname, dog is %v\n", *dogP)
+	*nameP = "Monster"
+	fmt.Printf("After setname, dog is %v\n", *dogP)
+	fmt.Printf("nameP is %v\n", nameP)
 
 }
