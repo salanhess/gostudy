@@ -13,13 +13,12 @@
     <option value="delvolume">删除可用状态云盘</option>
     <option value="delattachment">删除挂载状态云盘</option>
     <option value="delsnapshot">删除快照(试用版)</option>
-    <option value="delvolid">通过volid删除盘((每次填一个volumeid到操作原因中)</option>
-	<option value="checkvolid">通过volid查询盘状态(每次填一个volumeid到操作原因中)</option>
-	<option value="checkquota">检查quota 和zbs 白名单列表</option>
-	<option value="checkjss">检查快照(jss云存储) 用户计费中心(UC)服务状态</option>
+    <option value="delvolid">通过volid删除盘(试用版)</option>
+	<option value="checkvolid">通过volid删除盘(试用版)</option>
+	<option value="checkquota">检查quota</option>
+	<option value="checkjss">检查快照(jss云存储)服务</option>
 	<option value="checklogold10">检查zbs相关模块错误日志with10mins(试用版)</option>
 	<option value="checklogrange">检查zbs相关模块错误日志accordingRange(试用版)</option>
-	<option value="checkversion">检查zbs相关模块内存运行版本</option>
     </select>
 	操作原因:<input type="text" name="note">
 	<input type="hidden" name="token" value="{{.}}">

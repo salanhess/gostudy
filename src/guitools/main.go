@@ -328,15 +328,7 @@ func cleanup(w http.ResponseWriter, r *http.Request) {
 				fmt.Fprintf(w, "Error parameter not correct!") //这个写入到w的是输出到客户端的
 			}
 			wfile(file, "ZBS Operation:"+" sh checkrangelog.sh "+"\""+r.Form["note"][0]+"\"")
-			fmt.Fprintf(w, "ZBS checklogrange output: "+out) //这个写入到w的是输出到客户端的
-		case "checkversion":
-			fmt.Println("======ZBS Operation checkversion:")
-			out, err := Shell("sh checkversion.sh")
-			if err != nil {
-				fmt.Fprintf(w, "Error parameter not correct!") //这个写入到w的是输出到客户端的
-			}
-			wfile(file, "ZBS Operation:"+" sh checkversion.sh "+"\""+r.Form["note"][0]+"\"")
-			fmt.Fprintf(w, "ZBS checkversion output: "+out) //这个写入到w的是输出到客户端的
+			fmt.Fprintf(w, "ZBS checkold10minslog output: "+out) //这个写入到w的是输出到客户端的
 		default:
 			fmt.Printf("Default")
 		}
