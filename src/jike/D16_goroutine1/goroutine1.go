@@ -37,10 +37,19 @@ import (
 包装了go函数的 goroutine 往往还没有获得运行的机会。
 */
 func Start_goroutine1() {
-	for j := 0; j < 5; j++ {
+	for j := 0; j < 10; j++ {
 		go func() {
-			fmt.Println("vim-go ", j)
+			fmt.Println(j)
+			//fmt.Println("vim-go ", j)
 		}()
+	}
+}
+
+func Start_goroutine3() {
+	for i := 0; i < 10; i++ {
+		go func(i int) {
+			fmt.Println("vim-go ", i)
+		}(i)
 	}
 }
 
@@ -50,12 +59,14 @@ func Start_goroutine2() {
 		go func() {
 			fmt.Println("vim-go ", i)
 		}()
-		time.Sleep(1 * time.Microsecond)
 	}
+	time.Sleep(1 * time.Microsecond)
 }
 func main() {
 	Start_goroutine1()
 	time.Sleep(2 * time.Second)
 	fmt.Println("=========Add sleep========")
 	Start_goroutine2()
+	fmt.Println("=========Add para========")
+	Start_goroutine3()
 }
